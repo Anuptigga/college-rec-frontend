@@ -1,8 +1,8 @@
-// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { loginAdmin } from '../services/api';
+import { useAuth } from '../context/AuthContext.jsx'; // ✅ Import context
 
 const Wrapper = styled.div`
   display: flex;
@@ -72,6 +72,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -82,7 +83,7 @@ const LoginPage = () => {
     setError('');
     try {
       const res = await loginAdmin(formData);
-      localStorage.setItem('token', res.data.token);
+      login(res.data.token);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
